@@ -23,9 +23,14 @@ namespace DiscreteCalc
             this.vars = vars;
         }
 
+        private void _textBox_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(((Control)sender).Location);
+        }
+
         public string Sum(string left, string right)
         {
-            string currentTableName = "sum_" + left + "_" + right;
+            string currentTableName = left + "+" + right;
 
             List<string> certainLeftTable = GetTableFor(left);
             List<string> certainRightTable = GetTableFor(right);
@@ -35,14 +40,16 @@ namespace DiscreteCalc
             _textBox.Size = new Size(width, 40);
             _textBox.Text = "(" + left + ") + (" + right + ")";
             _textBox.Name = "main_" + currentTableName;
+            _textBox.Click += _textBox_Click;
             tabPageOutput.Controls.Add(_textBox);
             for (int i = 0; i < (int)Math.Pow(2, vars); i++)
             {
                 RichTextBox textBox = new RichTextBox();
-                textBox.Location = new Point(tables * width, 20 + i * 20);
+                textBox.Location = new Point(tables * width, 40 + i * 20);
                 textBox.Size = new Size(width, 20);
                 textBox.Text = certainLeftTable[i] == "0" && certainRightTable[i] == "0" ? "0" : "1";
                 textBox.Name = currentTableName + "_" + i;
+                textBox.Click += _textBox_Click;
                 tabPageOutput.Controls.Add(textBox);
             }
             tables++;
@@ -51,7 +58,7 @@ namespace DiscreteCalc
 
         public string Sheffer(string left, string right)
         {
-            string currentTableName = "sheffer_" + left + "_" + right;
+            string currentTableName = left + "|" + right;
 
             List<string> certainLeftTable = GetTableFor(left);
             List<string> certainRightTable = GetTableFor(right);
@@ -59,16 +66,18 @@ namespace DiscreteCalc
             RichTextBox _textBox = new RichTextBox();
             _textBox.Location = new Point(tables * width, 0);
             _textBox.Size = new Size(width, 40);
-            _textBox.Text = "(" + left + ") -> (" + right + ")";
+            _textBox.Text = "(" + left + ") | (" + right + ")";
             _textBox.Name = "main_" + currentTableName;
+            _textBox.Click += _textBox_Click;
             tabPageOutput.Controls.Add(_textBox);
             for (int i = 0; i < (int)Math.Pow(2, vars); i++)
             {
                 RichTextBox textBox = new RichTextBox();
-                textBox.Location = new Point(tables * width, 20 + i * 20);
+                textBox.Location = new Point(tables * width, 40 + i * 20);
                 textBox.Size = new Size(width, 20);
                 textBox.Text = certainLeftTable[i] == "1" && certainLeftTable[i] == "1" ? "0" : "1";
                 textBox.Name = currentTableName + "_" + i;
+                textBox.Click += _textBox_Click;
                 tabPageOutput.Controls.Add(textBox);
             }
             tables++;
@@ -77,7 +86,7 @@ namespace DiscreteCalc
 
         public string Implication(string left, string right)
         {
-            string currentTableName = "implication_" + left + "_" + right;
+            string currentTableName = left + ">" + right;
 
             List<string> certainLeftTable = GetTableFor(left);
             List<string> certainRightTable = GetTableFor(right);
@@ -87,14 +96,16 @@ namespace DiscreteCalc
             _textBox.Size = new Size(width, 40);
             _textBox.Text = "(" + left + ") > (" + right + ")";
             _textBox.Name = "main_" + currentTableName;
+            _textBox.Click += _textBox_Click;
             tabPageOutput.Controls.Add(_textBox);
             for (int i = 0; i < (int)Math.Pow(2, vars); i++)
             {
                 RichTextBox textBox = new RichTextBox();
-                textBox.Location = new Point(tables * width, 20 + i * 20);
+                textBox.Location = new Point(tables * width, 40 + i * 20);
                 textBox.Size = new Size(width, 20);
                 textBox.Text = int.Parse(certainLeftTable[i]) <= int.Parse(certainRightTable[i]) ? "1" : "0";
                 textBox.Name = currentTableName + "_" + i;
+                textBox.Click += _textBox_Click;
                 tabPageOutput.Controls.Add(textBox);
             }
             tables++;
@@ -103,7 +114,7 @@ namespace DiscreteCalc
 
         public string Mod2(string left, string right)
         {
-            string currentTableName = "mod2_" + left + "_" + right;
+            string currentTableName = left + "@" + right;
 
             List<string> certainLeftTable = GetTableFor(left);
             List<string> certainRightTable = GetTableFor(right);
@@ -111,16 +122,18 @@ namespace DiscreteCalc
             RichTextBox _textBox = new RichTextBox();
             _textBox.Location = new Point(tables * width, 0);
             _textBox.Size = new Size(width, 40);
-            _textBox.Text = "mod2((" + left + "), (" + right + "))";
+            _textBox.Text = "(" + left + ") @ (" + right + ")";
             _textBox.Name = "main_" + currentTableName;
+            _textBox.Click += _textBox_Click;
             tabPageOutput.Controls.Add(_textBox);
             for (int i = 0; i < (int)Math.Pow(2, vars); i++)
             {
                 RichTextBox textBox = new RichTextBox();
-                textBox.Location = new Point(tables * width, 20 + i * 20);
+                textBox.Location = new Point(tables * width, 40 + i * 20);
                 textBox.Size = new Size(width, 20);
                 textBox.Text = certainLeftTable[i] == certainRightTable[i] ? "0" : "1";
                 textBox.Name = currentTableName + "_" + i;
+                textBox.Click += _textBox_Click;
                 tabPageOutput.Controls.Add(textBox);
             }
             tables++;
@@ -129,7 +142,7 @@ namespace DiscreteCalc
 
         public string Pierce(string left, string right)
         {
-            string currentTableName = "pierce_" + left + "_" + right;
+            string currentTableName = left + "$" + right;
 
             List<string> certainLeftTable = GetTableFor(left);
             List<string> certainRightTable = GetTableFor(right);
@@ -139,14 +152,16 @@ namespace DiscreteCalc
             _textBox.Size = new Size(width, 40);
             _textBox.Text = "(" + left + ") $ (" + right + ")";
             _textBox.Name = "main_" + currentTableName;
+            _textBox.Click += _textBox_Click;
             tabPageOutput.Controls.Add(_textBox);
             for (int i = 0; i < (int)Math.Pow(2, vars); i++)
             {
                 RichTextBox textBox = new RichTextBox();
-                textBox.Location = new Point(tables * width, 20 + i * 20);
+                textBox.Location = new Point(tables * width, 40 + i * 20);
                 textBox.Size = new Size(width, 20);
                 textBox.Text = (int.Parse(Reverse(certainLeftTable[i])) * int.Parse(Reverse(certainRightTable[i]))).ToString();
                 textBox.Name = currentTableName + "_" + i;
+                textBox.Click += _textBox_Click;
                 tabPageOutput.Controls.Add(textBox);
             }
             tables++;
@@ -155,7 +170,7 @@ namespace DiscreteCalc
 
         public string Composition(string left, string right)
         {
-            string currentTableName = "composition_" + left + "_" + right;
+            string currentTableName = left + "*" + right;
 
             List<string> certainLeftTable = GetTableFor(left);
             List<string> certainRightTable = GetTableFor(right);
@@ -165,14 +180,43 @@ namespace DiscreteCalc
             _textBox.Size = new Size(width, 40);
             _textBox.Text = "(" + left + ") * (" + right + ")";
             _textBox.Name = "main_" + currentTableName;
+            _textBox.Click += _textBox_Click;
             tabPageOutput.Controls.Add(_textBox);
             for (int i = 0; i < (int)Math.Pow(2, vars); i++)
             {
                 RichTextBox textBox = new RichTextBox();
-                textBox.Location = new Point(tables * width, 20 + i * 20);
+                textBox.Location = new Point(tables * width, 40 + i * 20);
                 textBox.Size = new Size(width, 20);
                 textBox.Text = certainLeftTable[i] == "1" && certainRightTable[i] == "1" ? "1" : "0";
                 textBox.Name = currentTableName + "_" + i;
+                textBox.Click += _textBox_Click;
+                tabPageOutput.Controls.Add(textBox);
+            }
+            tables++;
+            return currentTableName;
+        }
+
+        public string Equality(string left, string right)
+        {
+            string currentTableName = left + "~" + right;
+
+            List<string> certainLeftTable = GetTableFor(left);
+            List<string> certainRightTable = GetTableFor(right);
+
+            RichTextBox _textBox = new RichTextBox();
+            _textBox.Location = new Point(tables * width, 0);
+            _textBox.Size = new Size(width, 40);
+            _textBox.Text = "(" + left + ") ~ (" + right + ")";
+            _textBox.Name = "main_" + currentTableName;
+            _textBox.Click += _textBox_Click;
+            tabPageOutput.Controls.Add(_textBox);
+            for (int i = 0; i < (int)Math.Pow(2, vars); i++) {
+                RichTextBox textBox = new RichTextBox();
+                textBox.Location = new Point(tables * width, 40 + i * 20);
+                textBox.Size = new Size(width, 20);
+                textBox.Text = certainLeftTable[i] == certainRightTable[i] ? "1" : "0";
+                textBox.Name = currentTableName + "_" + i;
+                textBox.Click += _textBox_Click;
                 tabPageOutput.Controls.Add(textBox);
             }
             tables++;
@@ -181,7 +225,7 @@ namespace DiscreteCalc
 
         public string Negation(string tableName)
         {
-            string currentTableName = "negation_" + tableName;
+            string currentTableName = tableName + '_';
 
             List<string> certainTable = GetTableFor(tableName);
 
@@ -190,14 +234,16 @@ namespace DiscreteCalc
             _textBox.Size = new Size(width, 40);
             _textBox.Text = "(" + tableName + ")_";
             _textBox.Name = "main_" + currentTableName;
+            _textBox.Click += _textBox_Click;
             tabPageOutput.Controls.Add(_textBox);
             for (int i = 0; i < (int)Math.Pow(2, vars); i++)
             {
                 RichTextBox textBox = new RichTextBox();
-                textBox.Location = new Point(tables * width, 20 + i * 20);
+                textBox.Location = new Point(tables * width, 40 + i * 20);
                 textBox.Size = new Size(width, 20);
                 textBox.Text = Reverse(certainTable[i]);
                 textBox.Name = currentTableName + "_" + i;
+                textBox.Click += _textBox_Click;
                 tabPageOutput.Controls.Add(textBox);
             }
             tables++;

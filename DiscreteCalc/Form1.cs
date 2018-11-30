@@ -15,14 +15,15 @@ namespace DiscreteCalc
         List<string> variables;
         List<char> functionIcons;
         string function;
+        string lastTableName;
 
-        BooleanFunctions boolean;
+        Simplifier simplifier;
 
         int width;
 
         int tables = 0;
 
-        TokenStream ts;
+        int globalY = 0;
 
         public Form1()
         {
@@ -51,124 +52,81 @@ namespace DiscreteCalc
                 InitializeVariables(textBoxInput.Text);
                 FillVariablesTables(); //Сохранение переменных
                 ReforgeToNumber(); //Оцифровка функций
-                ts = new TokenStream(function);
-                boolean = new BooleanFunctions(tabPageOutput, tables, width, variables.Count);
-                Highest();
+                lastTableName = (new DiscreteCalc(function, tabPageOutput, tables, width, variables.Count)).Start();
+                globalY = (int)Math.Pow(2, variables.Count) * 20 + 40;
+                string func = DeploySDNF();
+                DeploySKNF();
+                simplifier = new Simplifier(func, tabPageOutput, globalY);
+                simplifier.Start();
             }
         }
 
-        private string Highest()
+        private string DeploySDNF()
         {
-            string left = Higher();
-            Token t = ts.Get();
-            if(t.kind == '+')
-            {
-                left = boolean.Sum(left, Higher());
-                return left;
-            } else
-            {
-                ts.Putback(t);
-                return left;
+            if (!checkBoxSDNF.Checked) {
+                return "";
             }
+            return DeployNF(new SDNF());
         }
 
-        private string Higher()
+        private void DeploySKNF()
         {
-            string left = Lower();
-            Token t = ts.Get();
-            if (t.kind == '@')
-            {
-                left = boolean.Mod2(left, Lower());
-                return left;
+            if (!checkBoxSKNF.Checked) {
+                return;
             }
-            else if (t.kind == '>')
-            {
-                left = boolean.Implication(left, Lower());
-                return left;
-            }
-            else if (t.kind == '~')
-            {
-                //Произвести тильду left и нового Lower()
-                //Вернуть var нового столбца
-                //Вообще хз что это Оо
-                return null;
-            }
-            else if (t.kind == '|')
-            {
-                left = boolean.Sheffer(left, Lower());
-                return null;
-            }
-            else
-            {
-                ts.Putback(t);
-                return left;
-            }
+            DeployNF(new SKNF());
         }
 
-        private string Lower()
+        private string DeployNF(INF iNF)
         {
-            string left = Lowest();
-            Token t = ts.Get();
-            if (t.kind == '*')
-            {
-                left = boolean.Composition(left, Lowest());
-                return left;
+            List<List<int>> table = new List<List<int>>();
+
+            for(int i = 0; i < variables.Count; i++) {
+                List<int> _list = new List<int>();
+                for (int j = 0; j < (int)Math.Pow(2, variables.Count); j++) {
+                    _list.Add(GetValueFromTextBox(variables[i] + '_' + j));
+                }
+                table.Add(_list);
             }
-            else if (t.kind == '$')
-            {
-                left = boolean.Pierce(left, Lowest());
-                return left;
+
+
+            List<int> list = new List<int>();
+            for (int j = 0; j < (int)Math.Pow(2, variables.Count); j++) {
+                list.Add(GetValueFromTextBox(lastTableName + '_' + j));
             }
-            else
-            {
-                ts.Putback(t);
-                return left;
-            }
+            table.Add(list);
+
+            iNF.Put(table);
+            iNF.Count();
+            string answer = iNF.Decode(variables);
+            Panel panel = iNF.FormUI();
+
+            panel.Location = new Point(5, globalY);
+            globalY += panel.Height;
+
+            tabPageOutput.Controls.Add(panel);
+            panel.BringToFront();
+
+            return answer;
         }
 
-        private string Lowest()
+        private int GetValueFromTextBox(string name)
         {
-            string left = Primary();
-            Token t = ts.Get();
-            if (t.kind == '_')
-            {
-                left = boolean.Negation(left);
-                return left;
+            foreach(Control c in tabPageOutput.Controls) {
+                if (c.Name.Equals(name)) {
+                    return int.Parse(c.Text);
+                }
             }
-            else
-            {
-                ts.Putback(t);
-                return left;
-            }
+            throw new KeyNotFoundException(name + " не найден");
         }
 
-        private string Primary()
-        {
-            Token t = ts.Get();
-            if (t.kind == '(')
-            {
-                string left = Highest();
-                t = ts.Get();
-                if (t.kind != ')') MessageBox.Show("Where is )?");
-                return left;
-            }
-            else if (t.index == -1)
-            {
-                return t.var;
-            }
-            else
-            {
-                MessageBox.Show("Primary error");
-                return null;
-            }
-        }
-        
         private void FillVariablesTables()
         {
             int index = variables.Count;
+            int j = index - 1;
             foreach (string var in variables)
             {
-                int height = (int)Math.Pow(2, index) / 2,
+                int height = (int)Math.Pow(2, j--),
                     buf = height;
                 bool zero = true;
                 RichTextBox _textBox = new RichTextBox();
@@ -181,7 +139,7 @@ namespace DiscreteCalc
                 for (int i = 0; i < (int)Math.Pow(2, variables.Count); i++)
                 {
                     RichTextBox textBox = new RichTextBox();
-                    textBox.Location = new Point((variables.Count - index - 1) * width, 20 + i * 20);
+                    textBox.Location = new Point((variables.Count - index - 1) * width, 40 + i * 20);
                     textBox.Size = new Size(width, 20);
                     textBox.Text = zero?"0":"1";
                     textBox.Name = var + "_" + i;
@@ -228,108 +186,5 @@ namespace DiscreteCalc
                 }
             }
         }
-    }
-
-    public class TokenStream
-    {
-        string function;
-        public TokenStream(string _function)
-        {
-            function = _function;
-            index = 0;
-        }
-        List<char> functionIcons = new List<char>()
-            {
-                '_', '*', '$', '@', '>', '~', '|', '+'
-            };
-        int index;
-        
-        public void Putback(Token t)
-        {
-            index-=t.kind=='?'?0:(t.kind==')' || t.kind=='(' ? 1:2);
-            int _index = t.index;
-            int i = 0;
-            while(_index > 0)
-            {
-                _index /= 10;
-                i++;
-            }
-            index -= _index;
-        }
-
-        public Token Get()
-        {
-            if(index >= function.Length)
-            {
-                //MessageBox.Show("Rofl request");
-                return new Token('?');
-            }
-            //Число - операция
-            //Скобка - скобка
-            //Буква - переменная
-            if(IsNum(function[index]))
-            {
-                string operation = "";
-                while (index < function.Length && !functionIcons.Contains(function[index]))
-                    operation += function[index++];
-                operation += function[index++];
-                return new Token(operation, true);
-            }
-            else if(IsLetter(function[index]))
-            {
-                string var = "";
-                while (index < function.Length && IsLetter(function[index]))
-                    var += function[index++];
-                return new Token(var, false);
-            }
-            else if(index < function.Length && function[index] == '(' || function[index] == ')')
-            {
-                return new Token(function[index++]);
-            } 
-            else
-            {
-                MessageBox.Show("Rofl input, что-то не так с вводом");
-                return new Token('?');
-            }
-        }
-
-        private bool IsLetter(char v)
-        {
-            return (int)v >= 65 && (int)v <= 90 || (int)v >= 97 && (int)v <= 122;
-        }
-
-        private bool IsNum(char v)
-        {
-            return (int)v >= 48 && (int)v <= 57;
-        }
-    }
-
-    public class Token
-    {
-        public int index;
-        public char kind;
-        public string var;
-
-        public Token(char _kind)
-        {
-            kind = _kind;
-            index = 0;
-            var = "";
-        }
-
-        public Token(string str, bool isOperation)
-        {
-            var = "";
-            index = 0;
-            if(isOperation)
-            {
-                kind = str[str.Length - 1];
-                index = int.Parse(str.Substring(0, str.Length - 1));
-            } else
-            {
-                var = str;
-                index = -1;
-            }
-        }
-    }
+    }    
 }

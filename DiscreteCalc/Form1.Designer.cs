@@ -30,6 +30,8 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageInput = new System.Windows.Forms.TabPage();
+            this.checkBoxSKNF = new System.Windows.Forms.CheckBox();
+            this.checkBoxSDNF = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxWidth = new System.Windows.Forms.TextBox();
             this.buttonConfirm = new System.Windows.Forms.Button();
@@ -52,6 +54,8 @@
             // 
             // tabPageInput
             // 
+            this.tabPageInput.Controls.Add(this.checkBoxSKNF);
+            this.tabPageInput.Controls.Add(this.checkBoxSDNF);
             this.tabPageInput.Controls.Add(this.label1);
             this.tabPageInput.Controls.Add(this.textBoxWidth);
             this.tabPageInput.Controls.Add(this.buttonConfirm);
@@ -61,8 +65,28 @@
             this.tabPageInput.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageInput.Size = new System.Drawing.Size(792, 424);
             this.tabPageInput.TabIndex = 0;
-            this.tabPageInput.Text = "Вход";
+            this.tabPageInput.Text = "Формула";
             this.tabPageInput.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSKNF
+            // 
+            this.checkBoxSKNF.AutoSize = true;
+            this.checkBoxSKNF.Location = new System.Drawing.Point(596, 79);
+            this.checkBoxSKNF.Name = "checkBoxSKNF";
+            this.checkBoxSKNF.Size = new System.Drawing.Size(59, 17);
+            this.checkBoxSKNF.TabIndex = 5;
+            this.checkBoxSKNF.Text = "СКНФ";
+            this.checkBoxSKNF.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSDNF
+            // 
+            this.checkBoxSDNF.AutoSize = true;
+            this.checkBoxSDNF.Location = new System.Drawing.Point(596, 56);
+            this.checkBoxSDNF.Name = "checkBoxSDNF";
+            this.checkBoxSDNF.Size = new System.Drawing.Size(61, 17);
+            this.checkBoxSDNF.TabIndex = 4;
+            this.checkBoxSDNF.Text = "СДНФ";
+            this.checkBoxSDNF.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -97,7 +121,7 @@
             this.textBoxInput.Name = "textBoxInput";
             this.textBoxInput.Size = new System.Drawing.Size(775, 20);
             this.textBoxInput.TabIndex = 0;
-            this.textBoxInput.Text = "f(a,b,c,d)=((a@c)$(a+b*d))";
+            this.textBoxInput.Text = "f(a,b,c,d)=(c_*d|a*b_)>((b*c)_)$((a*b~a*d)_)";
             // 
             // tabPageOutput
             // 
@@ -107,7 +131,7 @@
             this.tabPageOutput.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageOutput.Size = new System.Drawing.Size(792, 424);
             this.tabPageOutput.TabIndex = 1;
-            this.tabPageOutput.Text = "Выход";
+            this.tabPageOutput.Text = "Таблица истинности";
             this.tabPageOutput.UseVisualStyleBackColor = true;
             // 
             // Form1
@@ -134,6 +158,8 @@
         private System.Windows.Forms.Button buttonConfirm;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBoxWidth;
+        private System.Windows.Forms.CheckBox checkBoxSKNF;
+        private System.Windows.Forms.CheckBox checkBoxSDNF;
     }
 }
 
